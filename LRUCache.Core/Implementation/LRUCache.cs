@@ -1,4 +1,5 @@
 ﻿using LRUCache.Core.Interface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,60 +8,49 @@ namespace LRUCache.Core.Implementation
     public class LRUCacheImplementation<K,V> : ICache<K,V> where K : class where V : class
     {
         private int? _maxItems;
-        private Dictionary<K, V> _cache = new Dictionary<K, V>();
+        private List<ElementCache<K,V>> _list = new List<ElementCache<K,V>>();
 
         public LRUCacheImplementation(int? maxItems = null)
         {
             _maxItems = maxItems;
         }
 
+        public ElementCache<K,V> GetElement(int index)
+        {
+            return _list.ElementAtOrDefault(index);
+        }
+
         public V Get(K key)
         {
-            if (_cache.TryGetValue(key, out var value))
+            var element = _list.FirstOrDefault(x => x.Key == key);
+
+            if (element != null)
             {
-                _cache.Remove(key);
-                _cache.Add(key, value);
-                return value;
+                _list.Remove(element);
+                _list.Insert(0, element);
+                return element.Value;
             }
             return default(V);
         }
 
         public void Set(K key, V value)
         {
-            if (_cache.TryGetValue(key, out var valueInCache))
+            var element = _list.FirstOrDefault(x => x.Key == key);
+
+            if (element != null)
             {
-                _cache.Remove(key);
+                _list.Remove(element);
             }
-            if (_maxItems.HasValue && _maxItems.Value == _cache.Count)
+            if (_maxItems.HasValue && _maxItems.Value == _list.Count)
             {
-                _cache.Remove(LastKey());
+                _list.RemoveAt(_list.Count - 1);
             }
-            _cache.Add(key, value);
-        }
-
-        private V LastValue()
-        {
-            return _cache[LastKey()];
-        }
-
-        private V FirstValue()
-        {
-            return _cache[FirstKey()];
-        }
-
-        private K FirstKey()
-        {
-            return _cache.Keys.Min();
-        }
-
-        private K LastKey()
-        {
-            return _cache.Keys.Max();
+            _list.Insert(0, new ElementCache<K, V>(key, value));
         }
 
         public override string ToString()
         {
-            return "{" + string.Join(",", _cache.Select(kv => kv.Key + "=" + kv.Value).ToArray()) + "}";
+            return "{" + string.Join(",", _list.Select(kv => kv.Key + "=" + kv.Value).ToArray()) + "}";
         }
 
     }

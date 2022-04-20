@@ -24,6 +24,9 @@ namespace LRUCache.ConsoleApp
             cache.Set("key1", "1");
             Console.WriteLine(cache);
 
+            cache.Set("key4", "newValue4");
+            Console.WriteLine(cache);
+
             Console.WriteLine("Press any key");
             Console.ReadKey();
         }

@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Implementation\ElementCache.cs" />
     <Compile Include="Implementation\LRUCache.cs" />
     <Compile Include="Interface\ICache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
