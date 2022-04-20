@@ -32,5 +32,18 @@ namespace LRUCache.Tests
             Assert.AreEqual(cache.GetElement(0).Key, "key4");
 
         }
+
+        [TestMethod]
+        public void CheckElementNotExists()
+        {
+            var cache = new LRUCacheImplementation<string, string>(3);
+            cache.Set("key3", "3");
+            cache.Set("key2", "2");
+            cache.Set("key4", "4");
+
+            var valueOfKeyNonExists = cache.Get("key1");
+
+            Assert.AreEqual(valueOfKeyNonExists, null);
+        }
     }
 }
